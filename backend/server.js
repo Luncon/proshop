@@ -3,7 +3,8 @@ import dotenv from 'dotenv';
 dotenv.config();    
 import connectDB from './config/db.js';
 import products from "./data/products.js";
-const port = process.env.PORT || 5000;
+const port = 3000 //process.env.PORT || 5000;
+import proudctRoutes from './routes/productRoutes.js'
 
 connectDB();
 
