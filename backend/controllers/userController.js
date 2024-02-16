@@ -89,8 +89,8 @@ const getUserProfile = asyncHandler(async (req, res) => {
             isAdmin: user.isAdmin,
         })
     } else {
-        res.status(404)
-        throw new Error('User not found')
+        res.status(401)
+        throw new Error('Invalid email or password')
     }
 })
 

@@ -20,7 +20,7 @@ const Header = () => {
         try{
             await logoutApiCall().unwrap()
             dispatch(logout())
-            navigate('/logout')
+            navigate('/login')
         }catch(err){
             console.log(err)
         }
