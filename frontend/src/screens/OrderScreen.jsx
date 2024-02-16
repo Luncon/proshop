@@ -3,7 +3,7 @@ import {Row, Col, ListGroup, Image, Button, Card, Form} from 'react-bootstrap'
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
-import { useGetOrderDetailsQuery, usePayOrderMutation, useGetPaypalClientIdQuery } from "../slices/ordersApiSlice";
+import { useGetOrderDetailsQuery, usePayOrderMutation, useGetPayPalClientIdQuery } from "../slices/ordersApiSlice";
 import { toast } from "react-toastify";
 import {useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -15,8 +15,8 @@ export const OrderScreen = () => {
         data: order, 
         isLoading, 
         refetch,
-        error} =
-    useGetOrderDetailsQuery(orderId)
+        error
+    } = useGetOrderDetailsQuery(orderId)
 
     const [payOrder, {isLoading:loadingPay}] = usePayOrderMutation()
 
@@ -24,7 +24,7 @@ export const OrderScreen = () => {
 
     const {userInfo} = useSelector((state) => state.auth)
 
-    const {data: paypal, isLoading: loadingPayPal, error: errorPayPal} = useGetPaypalClientIdQuery()
+    const {data: paypal, isLoading: loadingPayPal, error: errorPayPal} = useGetPayPalClientIdQuery()
 
     useEffect(() => {
         if(!errorPayPal && !loadingPayPal && paypal.clientId){
@@ -73,9 +73,7 @@ export const OrderScreen = () => {
         return actions.order.create({
             purchase_units:[
                 {
-                    amount:{
-                        value:order.totalPrice,
-                    }
+                    amount:{value:order.totalPrice},
                 }
             ]
         }).then((orderId) => {
@@ -87,7 +85,7 @@ export const OrderScreen = () => {
     return isLoading ? (
         <Loader/>
     ) : error ? (
-    <Message variant='danger'/>
+    <Message variant='danger'>{error.data.message}</Message>
     ) : (
         <>
             <h1>Order {order._id}</h1>
@@ -138,23 +136,29 @@ export const OrderScreen = () => {
 
                         <ListGroup.Item>
                             <h2>Order Items</h2>
-                            {order.orderItems.map((item, index) => (
-                                <ListGroup.Item key={index}>
-                                    <Row>
-                                        <Col md={1}>
-                                            <Image src={item.image} alt={item.name} fluid rounded/>
-                                        </Col>
-                                        <Col>
-                                            <Link to={`/product/${item.product}`}>
-                                                {item.name}
-                                            </Link>
-                                        </Col>
-                                        <Col md={4}>
-                                            {item.qty} x ${item.price} = ${item.qty * item.price}
-                                        </Col>
-                                    </Row>
-                                </ListGroup.Item>
-                            ))}
+                            {order.orderItems.length === 0 ? (
+                                <Message>Order is empty</Message>
+                            ) : (
+                                <ListGroup variant="flush">
+                                    {order.orderItems.map((item, index) => (
+                                        <ListGroup.Item key={index}>
+                                            <Row>
+                                                <Col md={1}>
+                                                   <Image src={item.image} alt={item.name} fluid rounded/>
+                                                </Col>
+                                                <Col>
+                                                    <Link to={`/product/${item.product}`}>
+                                                        {item.name}
+                                                    </Link>
+                                                </Col>
+                                                <Col md={4}>
+                                                    {item.qty} x ${item.price} = ${item.qty * item.price}
+                                                </Col>
+                                            </Row>
+                                        </ListGroup.Item>
+                                    ))}
+                                </ListGroup>
+                            )}
                         </ListGroup.Item>
                     </ListGroup>
                 </Col>
@@ -164,20 +168,25 @@ export const OrderScreen = () => {
                             <ListGroup.Item>
                                 <h2>Order Summary</h2>
                             </ListGroup.Item>
-
                             <ListGroup.Item>
                                 <Row>
                                     <Col>Items</Col>
                                     <Col>${order.itemsPrice}</Col>
                                 </Row>
+                            </ListGroup.Item>
+                            <ListGroup.Item>
                                 <Row>
                                     <Col>Shipping</Col>
                                     <Col>${order.shippingPrice}</Col>
                                 </Row>
+                            </ListGroup.Item>
+                            <ListGroup.Item>
                                 <Row>
                                     <Col>Tax</Col>
                                     <Col>${order.taxPrice}</Col>
                                 </Row>
+                            </ListGroup.Item>
+                            <ListGroup.Item>
                                 <Row>
                                     <Col>Total</Col>
                                     <Col>${order.totalPrice}</Col>
@@ -187,7 +196,7 @@ export const OrderScreen = () => {
                                     <ListGroup.Item>
                                         {loadingPay && <Loader/>}
 
-                                        {isPending ? ( <Loader/> ) : (
+                                        {isPending ? <Loader/> : (
                                             <div>
                                                 <Button 
                                                     onClick={onApproveTest} 
@@ -216,4 +225,4 @@ export const OrderScreen = () => {
     )
 }
 
-//export default OrderScreen
+export default OrderScreen
