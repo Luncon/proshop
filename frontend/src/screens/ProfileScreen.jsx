@@ -144,6 +144,7 @@ export const ProfileScreen = () => {
                                     </LinkContainer>
                                 </td>
                             </tr>
+                            
                         ))}
                     </tbody>
                 </Table>
