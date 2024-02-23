@@ -2,13 +2,13 @@ import { Link, useParams } from "react-router-dom";
 import {Row, Col, ListGroup, Image, Button, Card} from 'react-bootstrap'
 import Message from "../components/Message";
 import Loader from "../components/Loader";
-import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
+import { PayPalButtons, usePayPalScriptReducer , PayPalScriptProvider} from "@paypal/react-paypal-js";
 import { useGetOrderDetailsQuery, usePayOrderMutation, useGetPayPalClientIdQuery, useDeliverOrderMutation } from "../slices/ordersApiSlice";
 import { toast } from "react-toastify";
 import {useSelector } from "react-redux";
 import { useEffect } from "react";
 
-export const OrderScreen = () => {
+const OrderScreen = () => {
     const {id: orderId} = useParams()
 
     const {
@@ -38,7 +38,7 @@ export const OrderScreen = () => {
                         currency: 'USD',
                     }
                 })
-                paypalDispatch({types: 'setLoadingStatus', value: 'pending'})
+                paypalDispatch({type: 'setLoadingStatus', value: 'pending'})
             }
             if(order && !order.isPaid) {
                 if(!window.paypal) {
@@ -99,6 +99,7 @@ export const OrderScreen = () => {
     ) : error ? (
     <Message variant='danger'>{error?.data?.message || error.error}</Message>
     ) : (
+        //<PayPalScriptProvider options={{/*PayPal options*/}}>
         <>
             <h1>Order {order._id}</h1>
             <Row>
@@ -246,6 +247,7 @@ export const OrderScreen = () => {
                 </Col>
             </Row>
         </>
+        //</PayPalScriptProvider>
     )
 }
 
