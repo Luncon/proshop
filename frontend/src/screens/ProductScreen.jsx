@@ -10,6 +10,7 @@ import { Form } from 'react-bootstrap'
 import { addToCart } from '../slices/cartSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import {toast} from 'react-toastify'
+import Meta from '../components/Meta'
 
 
 const ProductScreen = () => {
@@ -68,6 +69,7 @@ const ProductScreen = () => {
             </Message>
         ) : (
             <>
+            <Meta title={product.name}/>
             <Row>
             <Col md={5}>
                 <Image src={product.image} alt={product.name} fluid />
@@ -78,8 +80,8 @@ const ProductScreen = () => {
                         <h3>{product.name}</h3>
                     </ListGroup.Item>
                     <ListGroup.Item>
-                        <Rating value={product.rating} text={`${product.
-                        numReviews} reviews`} />
+                        <Rating value={product.rating} text={`${product
+                        .numReviews} reviews`} />
                     </ListGroup.Item>
                     <ListGroup.Item>
                         Price: ${product.price}
@@ -118,8 +120,8 @@ const ProductScreen = () => {
                                         <Form.Control
                                             as='select'
                                             value = {qty}
-                                            onChange={(e) => setQty(Number(e.target.
-                                            value))}>
+                                            onChange={(e) => setQty(Number(e.target
+                                                .value))}>
                                             {[...Array(product.countInStock).keys()].map((x) => (
                                                 <option key={x + 1} value={x + 1}>
                                                     {x + 1}
