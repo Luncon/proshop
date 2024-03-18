@@ -2,7 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import {Row, Col, ListGroup, Image, Button, Card} from 'react-bootstrap'
 import Message from "../components/Message";
 import Loader from "../components/Loader";
-import { PayPalButtons, usePayPalScriptReducer , PayPalScriptProvider} from "@paypal/react-paypal-js";
+import { PayPalButtons, usePayPalScriptReducer} from "@paypal/react-paypal-js";
 import { useGetOrderDetailsQuery, usePayOrderMutation, useGetPayPalClientIdQuery, useDeliverOrderMutation } from "../slices/ordersApiSlice";
 import { toast } from "react-toastify";
 import {useSelector } from "react-redux";
@@ -51,7 +51,7 @@ const OrderScreen = () => {
     function onApprove(data, actions) { 
         return actions.order.capture().then(async function (details){ 
             try{
-                await payOrder({orderId, details})
+                await payOrder({orderId, details}).unwrap()
                 refetch()
                 toast.success('Payment Successful')
             }catch(err){
